@@ -2,6 +2,7 @@ from fastapi import FastAPI, Form
 from fastapi.responses import HTMLResponse
 from fastapi.middleware.cors import CORSMiddleware
 from starlette.responses import FileResponse
+import re
 
 app = FastAPI()
 
@@ -59,9 +60,24 @@ for file in static_files:
 def read_root():
     return html
 
+cringe_lines = ["village people"] 
+replace = {
+        "vuejs": "Vue.js",
+        "vue": "Vue",
+        "react": "React",
+        "macos": "garbage",
+        "linux": "GNU + Linux",
+        "windows": "spyware",
+        }
 
 @app.post("/", response_class=HTMLResponse)
 def post_root(data: str = Form()):
+    for line in cringe_lines:
+        if line in data:
+            return f"{html}<p>The server is not amused.</p>"
+    for key, value in replace.items():
+        data = re.sub(key, value, data, flags=re.IGNORECASE)
+
     packet = DataPacket(data)
     with open("/dev/ttyUSB0", "w") as f:
         f.write(str(packet))

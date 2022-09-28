@@ -14,7 +14,11 @@ def checksum_message(p):
     xorValue = 0
     for i in range(len(p)):
         xorValue ^= ord(p[i])
-    return str(hex(xorValue))[2:].upper()
+    chksum = str(hex(xorValue))[2:].upper()
+    # Pad with 0 if needed
+    if len(chksum) == 1:
+        chksum = '0' + chksum
+    return chksum
 
 
 if __name__ == "__main__":
